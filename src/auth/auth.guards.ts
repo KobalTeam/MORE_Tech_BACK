@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { JwtService } from "@nestjs/jwt";
-import { JwtPayload } from "../auth/tokens/tokens.dto";
+import { AccessJwtTokenPayload } from "./tokens/tokens.dto";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -26,7 +26,7 @@ export class JwtAuthGuard implements CanActivate {
                 throw new UnauthorizedException({ message: "User is not authorized" });
             }
 
-            const user = this._jwtService.verify(token, { secret: process.env.PRIVATE_KEY });
+            this._jwtService.verify(token, { secret: process.env.PRIVATE_KEY });
 
             return true;
         } catch (error) {
@@ -61,7 +61,16 @@ export class GetIdFromAuthGuard implements CanActivate {
                 return true;
             }
 
-            let userPayload = this._jwtService.decode(token) as JwtPayload;
+            try {
+                this._jwtService.verify(token, { secret: process.env.PRIVATE_KEY });
+            } catch (error) {
+                if (error.name === "TokenExpiredError") {
+                    req.userId = null;
+                    return true;
+                }
+                throw (error);
+            }
+            let userPayload = this._jwtService.decode(token) as AccessJwtTokenPayload;
             req.userId = userPayload.id;
 
             return true;

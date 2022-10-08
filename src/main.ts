@@ -2,6 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
+import { ServerErrorsInterceptor } from "./app.interceptors";
 
 async function start() {
   const PORT = process.env.PORT || 3000;
@@ -10,6 +11,7 @@ async function start() {
   app.useGlobalPipes(new ValidationPipe({
     transform: true
   }));
+  app.useGlobalInterceptors(new ServerErrorsInterceptor());
 
   const config = new DocumentBuilder()
     .setTitle("Kobold")

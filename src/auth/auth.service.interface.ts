@@ -1,13 +1,14 @@
-import { ClientSession } from "mongoose";
 import { RefreshTokenDto, TokenPairDto } from "./tokens/tokens.dto";
 import { LoginUserDto, RegisterUserDto } from "./auth.dto";
 
 export interface IAuthService {
-  registerUser(userDto: RegisterUserDto): Promise<TokenPairDto>,
+    register(userDto: RegisterUserDto): Promise<TokenPairDto>,
 
-  loginUser(userDto: LoginUserDto): Promise<TokenPairDto>,
+    login(userDto: LoginUserDto): Promise<TokenPairDto>,
 
-  refreshToken(refreshTokenDto: RefreshTokenDto): Promise<TokenPairDto>,
+    refreshTokens(refreshTokenDto: RefreshTokenDto): Promise<TokenPairDto>,
+
+    logout(refreshTokenDto: RefreshTokenDto): Promise<void>
 }
 
 export const IAuthService = Symbol("IAuthService");
